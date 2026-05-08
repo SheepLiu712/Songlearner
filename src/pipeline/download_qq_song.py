@@ -220,7 +220,7 @@ def qq_search_songs(song_name: str, timeout: int = 20) -> List[Dict]:
             "module": "music.search.SearchCgiService",
             "param": {
                 "query": song_name,
-                "num_per_page": 20,
+                "num_per_page": 30,
                 "page_num": 1,
                 "search_type": 0,
                 "grp": 1,
@@ -348,7 +348,7 @@ def download_song_and_lyric(
     output_dir = Path(output_dir).expanduser().resolve()
     credential_file = Path(credential_file).expanduser().resolve()
 
-    songs = qq_search_songs(song_name, timeout=timeout)
+    songs = qq_search_songs(song_name + " " + singer_name, timeout=timeout)
     singer_songs = pick_song_by_singer(songs, singer_name)
 
     for song in singer_songs:

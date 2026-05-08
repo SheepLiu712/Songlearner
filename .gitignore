@@ -79,3 +79,4 @@ wandb/
 pretrain/
 outputs/
 inputs/
+temp/

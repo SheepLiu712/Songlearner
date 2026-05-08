@@ -116,15 +116,7 @@ def render_clear_lrc(lyrics: List[LyricLine], boundaries: List[float]) -> List[s
     # 使用字典记录每个位置应该插入的标记
     # key: 行索引，value: 标记类型（"---" 表示边界，"===" 表示伴奏间隙）
     insert_positions = {}
-    
-    # 处理 boundary 标记（优先级高）
-    for boundary in boundaries:
-        idx = find_first_ge_index(lyrics, boundary)
-        if idx is None:
-            continue
-        pos = max(0, idx)
-        insert_positions[pos] = "---"
-    
+
     # 检查相邻歌词的时间差（超过10秒认为是伴奏）
     for idx in range(len(lyrics) - 1):
         current_time = lyrics[idx].time_seconds
@@ -135,6 +127,17 @@ def render_clear_lrc(lyrics: List[LyricLine], boundaries: List[float]) -> List[s
             # 在下一行之前插入 "===" 标记（除非该位置已有 "---" 标记）
             if idx + 1 not in insert_positions:
                 insert_positions[idx + 1] = "==="
+    
+    # 处理 boundary 标记（优先级低）
+    for boundary in boundaries:
+        idx = find_first_ge_index(lyrics, boundary)
+        if idx is None:
+            continue
+        pos = max(0, idx)
+        if pos not in insert_positions:
+            insert_positions[pos] = "---"
+    
+
 
     rendered: List[str] = []
     for idx, item in enumerate(lyrics):
